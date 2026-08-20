@@ -5,6 +5,7 @@ import {
   getPlayerPointHistory,
   getPlayerRankings,
   resetPlayerPassword,
+  updatePlayer,
 } from '../api/players'
 import { ApiError } from '../api/client'
 import type { PlayerRankingResponse, PlayerResponse, PointHistoryEntryResponse } from '../api/types'
@@ -29,6 +30,7 @@ export function PlayerDetailPage() {
   const [newPassword, setNewPassword] = useState('')
   const [resetMessage, setResetMessage] = useState<{ text: string; ok: boolean } | null>(null)
   const [resetSubmitting, setResetSubmitting] = useState(false)
+  const [togglingActive, setTogglingActive] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -70,6 +72,21 @@ export function PlayerDetailPage() {
     }
   }
 
+  async function handleToggleActive() {
+    if (loadState.status !== 'ready') return
+    setTogglingActive(true)
+    try {
+      const updated = await updatePlayer(loadState.player.id, { active: !loadState.player.active })
+      setLoadState((previous) =>
+        previous.status === 'ready' ? { ...previous, player: updated } : previous,
+      )
+    } catch {
+      // leave state as-is; the button just stops spinning and can be retried
+    } finally {
+      setTogglingActive(false)
+    }
+  }
+
   if (loadState.status === 'loading') return <p>불러오는 중...</p>
   if (loadState.status === 'error') {
     return (
@@ -85,7 +102,14 @@ export function PlayerDetailPage() {
     <div className="admin-page">
       <header className="admin-header">
         <h1>{player.fullName}</h1>
-        {user?.role === 'ADMIN' && <Link to={`/players/${player.id}/edit`}>프로필 수정</Link>}
+        {user?.role === 'ADMIN' && (
+          <div className="header-actions">
+            <Link to={`/players/${player.id}/edit`}>프로필 수정</Link>
+            <button onClick={handleToggleActive} disabled={togglingActive}>
+              {player.active ? '비활성화' : '활성화'}
+            </button>
+          </div>
+        )}
       </header>
 
       <section className="detail-section">
