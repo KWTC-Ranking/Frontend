@@ -12,3 +12,12 @@ services:
     ports:
       - "${FRONTEND_PORT:-80}:80"
     restart: unless-stopped
+    networks:
+      - kwtc-ranking
+
+networks:
+  kwtc-ranking:
+    # Shared with the backend and the deploy/ Caddy reverse proxy (in the Backend repo) so Caddy
+    # can reach this container by name. Created once with `docker network create kwtc-ranking` —
+    # see the Backend repo's deploy/README.md for the full EC2 runbook.
+    external: true

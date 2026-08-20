@@ -69,6 +69,13 @@ src/
 번들에 박히기 때문에, 백엔드 주소가 바뀌면 컨테이너를 재시작하는 게 아니라 이미지를 다시 빌드해야
 합니다.**
 
+도메인 + AWS EC2로 백엔드와 함께 HTTPS로 배포하는 전체 절차(DNS/보안그룹/Caddy 리버스 프록시
+포함)는 [백엔드 저장소의 `deploy/README.md`](https://github.com/KWTC-Ranking/Backend/blob/main/deploy/README.md)에
+정리되어 있습니다. 이 컨테이너는 그 절차의 일부로, 백엔드/Caddy와 `kwtc-ranking`이라는 공유 Docker
+네트워크에 속합니다 (`docker network create kwtc-ranking`을 먼저 실행해야 합니다).
+
+단독으로 빌드/실행만 해볼 때:
+
 1. 환경변수 템플릿 복사:
    ```
    cp .env.example .env
