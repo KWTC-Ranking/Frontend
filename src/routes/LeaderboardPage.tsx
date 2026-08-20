@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { getLeaderboard } from '../api/leaderboard'
 import type { LeaderboardEntry, MatchType } from '../api/types'
 import { useAuth } from '../context/useAuth'
@@ -33,11 +34,12 @@ export function LeaderboardPage() {
   return (
     <div className="page leaderboard-page">
       <header className="leaderboard-header">
-        <h1>랭킹</h1>
+        <h1>KWTC 랭킹</h1>
         <div className="session-info">
           <span>
             {user?.username} · {user?.role}
           </span>
+          {user?.role === 'ADMIN' && <Link to="/admin/members/new">회원 추가</Link>}
           <button onClick={logout}>로그아웃</button>
         </div>
       </header>

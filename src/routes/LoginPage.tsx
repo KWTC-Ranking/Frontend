@@ -28,7 +28,7 @@ export function LoginPage() {
   return (
     <div className="page login-page">
       <form className="login-form" onSubmit={handleSubmit}>
-        <h1>테니스 동아리 랭킹</h1>
+        <h1>KWTC 랭킹</h1>
         <label>
           아이디
           <input
