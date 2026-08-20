@@ -1,0 +1,14 @@
+# docker compose up -d --build
+# Requires a .env file (see .env.example) with VITE_API_BASE_URL set to the backend's real,
+# reachable-from-the-browser URL — it gets baked into the build, so changing it later means
+# rebuilding: docker compose up -d --build.
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:?Set VITE_API_BASE_URL in .env (the backend's public URL)}
+    container_name: kwtc-ranking-frontend
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    restart: unless-stopped

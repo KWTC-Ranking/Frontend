@@ -507,19 +507,47 @@ td button {
     padding: 20px 14px 60px;
   }
 
+  /* Below 640px the single-row flex-wrap nav breaks individual links onto
+     ragged lines and leaves the session controls stranded wherever they
+     happen to wrap to. Switch to a 2-row grid instead: brand + session
+     share a fixed top row, and the links become one horizontally
+     scrollable strip below (their DOM order doesn't matter for a grid,
+     so no markup changes needed). */
   .topnav {
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 'brand session' 'links links';
+    align-items: center;
+    gap: 8px 10px;
     padding: 10px 14px;
   }
 
+  .topnav-brand {
+    grid-area: brand;
+  }
+
+  .topnav-session {
+    grid-area: session;
+  }
+
   .topnav-links {
+    grid-area: links;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
     gap: 2px;
+  }
+
+  .topnav-links::-webkit-scrollbar {
+    display: none;
   }
 
   .topnav-links a,
   .topnav-session a {
     padding: 6px 8px;
     font-size: 12.5px;
+    white-space: nowrap;
   }
 
   .admin-header {
