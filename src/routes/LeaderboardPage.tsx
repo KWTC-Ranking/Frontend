@@ -61,35 +61,37 @@ export function LeaderboardPage() {
       )}
 
       {loadState.status === 'ready' && (
-        <table>
-          <thead>
-            <tr>
-              <th>순위</th>
-              <th>이름</th>
-              <th>티어</th>
-              <th>승</th>
-              <th>패</th>
-              <th>점수</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loadState.entries.map((entry) => (
-              <tr key={entry.playerId}>
-                <td>{entry.rank}</td>
-                <td>{entry.fullName}</td>
-                <td>{entry.tier}</td>
-                <td>{entry.wins}</td>
-                <td>{entry.losses}</td>
-                <td>{entry.points}</td>
-              </tr>
-            ))}
-            {loadState.entries.length === 0 && (
+        <div className="table-wrap">
+          <table>
+            <thead>
               <tr>
-                <td colSpan={6}>아직 기록이 없습니다.</td>
+                <th>순위</th>
+                <th>이름</th>
+                <th>티어</th>
+                <th>승</th>
+                <th>패</th>
+                <th>점수</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {loadState.entries.map((entry) => (
+                <tr key={entry.playerId}>
+                  <td>{entry.rank}</td>
+                  <td>{entry.fullName}</td>
+                  <td>{entry.tier}</td>
+                  <td>{entry.wins}</td>
+                  <td>{entry.losses}</td>
+                  <td>{entry.points}</td>
+                </tr>
+              ))}
+              {loadState.entries.length === 0 && (
+                <tr>
+                  <td colSpan={6}>아직 기록이 없습니다.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

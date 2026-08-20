@@ -43,37 +43,39 @@ export function MatchListPage() {
       )}
 
       {loadState.status === 'ready' && (
-        <table>
-          <thead>
-            <tr>
-              <th>경기</th>
-              <th>종목</th>
-              <th>일시</th>
-              <th>A팀</th>
-              <th>B팀</th>
-              <th>승리</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loadState.matches.map((match) => (
-              <tr key={match.id}>
-                <td>
-                  <Link to={`/matches/${match.id}`}>#{match.id}</Link>
-                </td>
-                <td>{match.matchType === 'SINGLES' ? '단식' : '복식'}</td>
-                <td>{new Date(match.playedAt).toLocaleString('ko-KR')}</td>
-                <td>{match.teamASummary}</td>
-                <td>{match.teamBSummary}</td>
-                <td>{match.winningSide}팀</td>
-              </tr>
-            ))}
-            {loadState.matches.length === 0 && (
+        <div className="table-wrap">
+          <table>
+            <thead>
               <tr>
-                <td colSpan={6}>아직 기록된 경기가 없습니다.</td>
+                <th>경기</th>
+                <th>종목</th>
+                <th>일시</th>
+                <th>A팀</th>
+                <th>B팀</th>
+                <th>승리</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {loadState.matches.map((match) => (
+                <tr key={match.id}>
+                  <td>
+                    <Link to={`/matches/${match.id}`}>#{match.id}</Link>
+                  </td>
+                  <td>{match.matchType === 'SINGLES' ? '단식' : '복식'}</td>
+                  <td>{new Date(match.playedAt).toLocaleString('ko-KR')}</td>
+                  <td>{match.teamASummary}</td>
+                  <td>{match.teamBSummary}</td>
+                  <td>{match.winningSide}팀</td>
+                </tr>
+              ))}
+              {loadState.matches.length === 0 && (
+                <tr>
+                  <td colSpan={6}>아직 기록된 경기가 없습니다.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

@@ -139,28 +139,30 @@ export function PlayerDetailPage() {
         {rankings.length === 0 ? (
           <p>아직 경기 기록이 없습니다.</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>종목</th>
-                <th>티어</th>
-                <th>승</th>
-                <th>패</th>
-                <th>점수</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rankings.map((ranking) => (
-                <tr key={ranking.matchType}>
-                  <td>{ranking.matchType === 'SINGLES' ? '단식' : '복식'}</td>
-                  <td>{ranking.tier}</td>
-                  <td>{ranking.wins}</td>
-                  <td>{ranking.losses}</td>
-                  <td>{ranking.points}</td>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>종목</th>
+                  <th>티어</th>
+                  <th>승</th>
+                  <th>패</th>
+                  <th>점수</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {rankings.map((ranking) => (
+                  <tr key={ranking.matchType}>
+                    <td>{ranking.matchType === 'SINGLES' ? '단식' : '복식'}</td>
+                    <td>{ranking.tier}</td>
+                    <td>{ranking.wins}</td>
+                    <td>{ranking.losses}</td>
+                    <td>{ranking.points}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
 
@@ -169,32 +171,34 @@ export function PlayerDetailPage() {
         {history.length === 0 ? (
           <p>아직 이력이 없습니다.</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>경기</th>
-                <th>결과</th>
-                <th>세트격차</th>
-                <th>티어가중치</th>
-                <th>마진가중치</th>
-                <th>획득점수</th>
-              </tr>
-            </thead>
-            <tbody>
-              {history.map((entry) => (
-                <tr key={entry.id}>
-                  <td>
-                    <Link to={`/matches/${entry.matchId}`}>#{entry.matchId}</Link>
-                  </td>
-                  <td>{entry.role === 'WINNER' ? '승' : '패'}</td>
-                  <td>{entry.setMargin}</td>
-                  <td>{entry.tierWeight}</td>
-                  <td>{entry.marginWeight}</td>
-                  <td>{entry.pointsAwarded}</td>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>경기</th>
+                  <th>결과</th>
+                  <th>세트격차</th>
+                  <th>티어가중치</th>
+                  <th>마진가중치</th>
+                  <th>획득점수</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {history.map((entry) => (
+                  <tr key={entry.id}>
+                    <td>
+                      <Link to={`/matches/${entry.matchId}`}>#{entry.matchId}</Link>
+                    </td>
+                    <td>{entry.role === 'WINNER' ? '승' : '패'}</td>
+                    <td>{entry.setMargin}</td>
+                    <td>{entry.tierWeight}</td>
+                    <td>{entry.marginWeight}</td>
+                    <td>{entry.pointsAwarded}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
 

@@ -64,45 +64,50 @@ export function PlayerListPage() {
       )}
 
       {loadState.status === 'ready' && (
-        <table>
-          <thead>
-            <tr>
-              <th>이름</th>
-              <th>아이디</th>
-              <th>역할</th>
-              <th>상태</th>
-              {user?.role === 'ADMIN' && <th></th>}
-            </tr>
-          </thead>
-          <tbody>
-            {loadState.players.map((player) => (
-              <tr key={player.id} className={player.active ? '' : 'inactive-row'}>
-                <td>
-                  <Link to={`/players/${player.id}`}>{player.fullName}</Link>
-                </td>
-                <td>{player.username}</td>
-                <td>{player.role}</td>
-                <td>
-                  <span className={player.active ? 'status-pill active' : 'status-pill inactive'}>
-                    {player.active ? '활성' : '비활성'}
-                  </span>
-                </td>
-                {user?.role === 'ADMIN' && (
-                  <td>
-                    <button onClick={() => toggleActive(player)} disabled={pendingId === player.id}>
-                      {player.active ? '비활성화' : '활성화'}
-                    </button>
-                  </td>
-                )}
-              </tr>
-            ))}
-            {loadState.players.length === 0 && (
+        <div className="table-wrap">
+          <table>
+            <thead>
               <tr>
-                <td colSpan={user?.role === 'ADMIN' ? 5 : 4}>등록된 회원이 없습니다.</td>
+                <th>이름</th>
+                <th>아이디</th>
+                <th>역할</th>
+                <th>상태</th>
+                {user?.role === 'ADMIN' && <th></th>}
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {loadState.players.map((player) => (
+                <tr key={player.id} className={player.active ? '' : 'inactive-row'}>
+                  <td>
+                    <Link to={`/players/${player.id}`}>{player.fullName}</Link>
+                  </td>
+                  <td>{player.username}</td>
+                  <td>{player.role}</td>
+                  <td>
+                    <span className={player.active ? 'status-pill active' : 'status-pill inactive'}>
+                      {player.active ? '활성' : '비활성'}
+                    </span>
+                  </td>
+                  {user?.role === 'ADMIN' && (
+                    <td>
+                      <button
+                        onClick={() => toggleActive(player)}
+                        disabled={pendingId === player.id}
+                      >
+                        {player.active ? '비활성화' : '활성화'}
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))}
+              {loadState.players.length === 0 && (
+                <tr>
+                  <td colSpan={user?.role === 'ADMIN' ? 5 : 4}>등록된 회원이 없습니다.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

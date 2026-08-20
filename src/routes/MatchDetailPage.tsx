@@ -88,46 +88,50 @@ export function MatchDetailPage() {
 
       <section className="detail-section">
         <h2>세트 스코어</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>세트</th>
-              <th>A팀</th>
-              <th>B팀</th>
-            </tr>
-          </thead>
-          <tbody>
-            {match.sets.map((set) => (
-              <tr key={set.setNumber}>
-                <td>{set.setNumber}</td>
-                <td>{set.teamAGames}</td>
-                <td>{set.teamBGames}</td>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>세트</th>
+                <th>A팀</th>
+                <th>B팀</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {match.sets.map((set) => (
+                <tr key={set.setNumber}>
+                  <td>{set.setNumber}</td>
+                  <td>{set.teamAGames}</td>
+                  <td>{set.teamBGames}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section className="detail-section">
         <h2>점수 지급 내역</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>선수</th>
-              <th>결과</th>
-              <th>획득 점수</th>
-            </tr>
-          </thead>
-          <tbody>
-            {match.pointTransactions.map((tx) => (
-              <tr key={tx.playerId}>
-                <td>{tx.fullName}</td>
-                <td>{tx.role === 'WINNER' ? '승' : '패'}</td>
-                <td>{tx.pointsAwarded}</td>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>선수</th>
+                <th>결과</th>
+                <th>획득 점수</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {match.pointTransactions.map((tx) => (
+                <tr key={tx.playerId}>
+                  <td>{tx.fullName}</td>
+                  <td>{tx.role === 'WINNER' ? '승' : '패'}</td>
+                  <td>{tx.pointsAwarded}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
     </div>
   )
