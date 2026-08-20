@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { getLeaderboard } from '../api/leaderboard'
 import type { LeaderboardEntry, MatchType } from '../api/types'
-import { useAuth } from '../context/useAuth'
 
 type LoadState =
   | { status: 'loading' }
@@ -12,7 +10,6 @@ type LoadState =
 export function LeaderboardPage() {
   const [matchType, setMatchType] = useState<MatchType>('SINGLES')
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
-  const { user, logout } = useAuth()
 
   useEffect(() => {
     let cancelled = false
@@ -32,16 +29,9 @@ export function LeaderboardPage() {
   }, [matchType])
 
   return (
-    <div className="page leaderboard-page">
-      <header className="leaderboard-header">
-        <h1>KWTC 랭킹</h1>
-        <div className="session-info">
-          <span>
-            {user?.username} · {user?.role}
-          </span>
-          {user?.role === 'ADMIN' && <Link to="/admin/members/new">회원 추가</Link>}
-          <button onClick={logout}>로그아웃</button>
-        </div>
+    <div className="admin-page">
+      <header className="admin-header">
+        <h1>리더보드</h1>
       </header>
 
       <div className="tabs" role="tablist">

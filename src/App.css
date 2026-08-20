@@ -1,4 +1,5 @@
-.page {
+.page,
+.admin-page {
   max-width: 720px;
   margin: 0 auto;
   padding: 32px 20px 80px;
@@ -61,33 +62,70 @@
   cursor: default;
 }
 
-/* ---------- leaderboard ---------- */
-.leaderboard-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 20px;
+/* ---------- top nav (Layout) ---------- */
+.app-shell {
+  min-height: 100svh;
 }
 
-.session-info {
+.topnav {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-wrap: wrap;
+}
+
+.topnav-brand {
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.topnav-links {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.topnav-links a,
+.topnav-session a {
+  padding: 6px 10px;
+  border-radius: 6px;
   font-size: 13px;
   color: var(--text-muted);
-}
-
-.session-info button,
-.session-info a {
-  padding: 6px 12px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--surface);
-  color: var(--text);
   text-decoration: none;
 }
 
+.topnav-links a.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.topnav-session {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.topnav-session button {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app-main {
+  padding: 0;
+}
+
+/* ---------- tabs (leaderboard) ---------- */
 .tabs {
   display: flex;
   gap: 6px;
@@ -109,6 +147,7 @@
   font-weight: 600;
 }
 
+/* ---------- tables ---------- */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -129,12 +168,28 @@ th {
   color: var(--text-muted);
 }
 
+.table-wrap {
+  overflow-x: auto;
+}
+
 .error {
   color: var(--error);
   font-size: 13px;
 }
 
-/* ---------- admin: add member ---------- */
+.success {
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.hint {
+  color: var(--text-muted);
+  font-size: 13px;
+  max-width: 60ch;
+  margin-bottom: 16px;
+}
+
+/* ---------- admin pages / forms ---------- */
 .admin-header {
   display: flex;
   align-items: center;
@@ -148,18 +203,20 @@ th {
   color: var(--text-muted);
 }
 
-.member-form {
+.member-form,
+.match-form {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  max-width: 380px;
+  max-width: 420px;
   padding: 24px;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface);
 }
 
-.member-form label {
+.member-form label,
+.match-form label {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -167,8 +224,16 @@ th {
   color: var(--text-muted);
 }
 
+.checkbox-label {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px !important;
+}
+
 .member-form input,
-.member-form select {
+.member-form select,
+.match-form input,
+.match-form select {
   padding: 9px 10px;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -177,7 +242,8 @@ th {
   font-family: inherit;
 }
 
-.member-form button {
+.member-form button,
+.match-form button[type='submit'] {
   margin-top: 6px;
   padding: 10px;
   border: none;
@@ -187,7 +253,8 @@ th {
   font-weight: 600;
 }
 
-.member-form button:disabled {
+.member-form button:disabled,
+.match-form button:disabled {
   opacity: 0.6;
   cursor: default;
 }
@@ -217,4 +284,172 @@ th {
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--surface);
+}
+
+/* ---------- player detail ---------- */
+.detail-section {
+  margin-bottom: 28px;
+}
+
+.detail-section h2 {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.kv div {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.kv dt {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.kv dd {
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+/* ---------- match form ---------- */
+.team-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.match-form fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.match-form legend {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 0;
+  margin-bottom: 4px;
+}
+
+.set-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.set-inputs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.set-inputs-header button {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12px;
+}
+
+.set-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.set-row input {
+  width: 90px;
+  padding: 7px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.set-row button {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--error);
+  font-size: 12px;
+}
+
+.match-result {
+  margin-top: 24px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--accent-soft);
+  max-width: 420px;
+}
+
+.match-result h2 {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.match-result ul {
+  margin: 8px 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+/* ---------- match detail ---------- */
+.team-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.team-card {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.team-card.winner {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.team-card h3 {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.team-card ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+/* ---------- tier weight matrix ---------- */
+.matrix-table input {
+  width: 70px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
 }

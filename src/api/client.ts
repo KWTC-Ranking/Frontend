@@ -22,6 +22,17 @@ export function setStoredToken(token: string | null): void {
   }
 }
 
+export function buildQuery(params: Record<string, string | number | boolean | undefined>): string {
+  const search = new URLSearchParams()
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined) {
+      search.set(key, String(value))
+    }
+  }
+  const query = search.toString()
+  return query ? `?${query}` : ''
+}
+
 export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getStoredToken()
   const headers = new Headers(options.headers)
