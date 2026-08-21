@@ -10,6 +10,7 @@ export function AddMemberPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState<PlayerRole>('MEMBER')
+  const [initialTier, setInitialTier] = useState(4)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [addedMembers, setAddedMembers] = useState<PlayerResponse[]>([])
@@ -25,6 +26,7 @@ export function AddMemberPage() {
         username,
         password,
         role,
+        initialTier,
       })
       setAddedMembers((previous) => [created, ...previous])
       setFullName('')
@@ -32,6 +34,7 @@ export function AddMemberPage() {
       setUsername('')
       setPassword('')
       setRole('MEMBER')
+      setInitialTier(4)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : '회원 추가에 실패했습니다.')
     } finally {
@@ -82,6 +85,22 @@ export function AddMemberPage() {
             <option value="ADMIN">ADMIN</option>
           </select>
         </label>
+        <label>
+          시작 티어
+          <select
+            value={initialTier}
+            onChange={(event) => setInitialTier(Number(event.target.value))}
+          >
+            <option value={1}>티어 1 (최상위)</option>
+            <option value={2}>티어 2</option>
+            <option value={3}>티어 3</option>
+            <option value={4}>티어 4 (최하위 / 실력 미확인)</option>
+          </select>
+        </label>
+        <p className="hint">
+          단식·복식 모두 이 티어로 시작합니다. 실제 경기 결과가 쌓이면 점수에 따라 자동으로
+          재조정되니, 대략적인 실력만 골라주시면 됩니다.
+        </p>
 
         {error && (
           <p className="error" role="alert">

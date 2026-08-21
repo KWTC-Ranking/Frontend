@@ -14,6 +14,7 @@ import { MatchListPage } from './routes/MatchListPage'
 import { MatchDetailPage } from './routes/MatchDetailPage'
 import { AddMemberPage } from './routes/AddMemberPage'
 import { AdminTierWeightsPage } from './routes/AdminTierWeightsPage'
+import { AdminDataResetPage } from './routes/AdminDataResetPage'
 import './App.css'
 
 function App() {
@@ -60,6 +61,14 @@ function App() {
               element={
                 <AdminRoute>
                   <AdminTierWeightsPage />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="admin/data-reset"
+              element={
+                <AdminRoute>
+                  <AdminDataResetPage />
                 </AdminRoute>
               }
             />

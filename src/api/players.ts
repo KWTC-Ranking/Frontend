@@ -39,6 +39,11 @@ export function resetPlayerPassword(id: number, request: PasswordResetRequest): 
   })
 }
 
+/** Only succeeds if the player has never played a match; the backend returns 409 otherwise. */
+export function deletePlayer(id: number): Promise<void> {
+  return apiFetch<void>(`/api/players/${id}`, { method: 'DELETE' })
+}
+
 export function getPlayerRankings(id: number): Promise<PlayerRankingResponse[]> {
   return apiFetch<PlayerRankingResponse[]>(`/api/players/${id}/rankings`)
 }

@@ -41,6 +41,8 @@ export interface PlayerCreateRequest {
   username: string
   password: string
   role?: PlayerRole
+  /** 1(최상위)~4(최하위). 비워두면 첫 경기 전까지 랭킹이 생성되지 않는 기존 방식을 따릅니다. */
+  initialTier?: number
 }
 
 export interface PlayerUpdateRequest {
@@ -78,7 +80,7 @@ export interface PointHistoryEntryResponse {
   marginWeight: number
   winnerTierAtMatch: number
   loserTierAtMatch: number
-  setMargin: number
+  gameMargin: number
   pointsBefore: number
   pointsAfter: number
   pointsAwarded: number
@@ -174,4 +176,10 @@ export interface TierWeightMatrixResponse {
 
 export interface TierWeightUpdateRequest {
   entries: TierWeightEntry[]
+}
+
+export interface DataResetResponse {
+  deletedPlayers: number
+  deletedMatches: number
+  deletedRankings: number
 }

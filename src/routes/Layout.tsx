@@ -17,6 +17,7 @@ export function Layout() {
           <NavLink to="/players">회원</NavLink>
           {user?.role === 'ADMIN' && <NavLink to="/admin/members/new">회원 추가</NavLink>}
           {user?.role === 'ADMIN' && <NavLink to="/admin/tier-weights">티어 가중치</NavLink>}
+          {user?.role === 'ADMIN' && <NavLink to="/admin/data-reset">데이터 초기화</NavLink>}
         </div>
         <div className="topnav-session">
           <NavLink to="/change-password">
@@ -28,6 +29,7 @@ export function Layout() {
       <main className="app-main">
         <Outlet />
       </main>
+      <footer className="app-footer">제작 강현서 · 배급 김도현</footer>
     </div>
   )
 }

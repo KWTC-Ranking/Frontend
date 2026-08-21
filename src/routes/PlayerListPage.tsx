@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { listPlayers, updatePlayer } from '../api/players'
+import { deletePlayer, listPlayers, updatePlayer } from '../api/players'
+import { ApiError } from '../api/client'
 import type { PlayerResponse } from '../api/types'
 import { useAuth } from '../context/useAuth'
 
@@ -12,6 +13,7 @@ type LoadState =
 export function PlayerListPage() {
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
   const [pendingId, setPendingId] = useState<number | null>(null)
+  const [deleteErrors, setDeleteErrors] = useState<Record<number, string>>({})
   const { user } = useAuth()
 
   useEffect(() => {
@@ -45,6 +47,34 @@ export function PlayerListPage() {
       )
     } catch {
       // leave the row as-is; the button simply stops spinning and can be retried
+    } finally {
+      setPendingId(null)
+    }
+  }
+
+  async function handleDelete(player: PlayerResponse) {
+    if (!window.confirm(`${player.fullName} 님을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) {
+      return
+    }
+    setPendingId(player.id)
+    setDeleteErrors((previous) => {
+      const next = { ...previous }
+      delete next[player.id]
+      return next
+    })
+    try {
+      await deletePlayer(player.id)
+      setLoadState((previous) =>
+        previous.status === 'ready'
+          ? { status: 'ready', players: previous.players.filter((p) => p.id !== player.id) }
+          : previous,
+      )
+    } catch (err) {
+      const message =
+        err instanceof ApiError && err.status === 409
+          ? '경기 기록이 있어 삭제할 수 없습니다. 대신 비활성화를 사용하세요.'
+          : '삭제에 실패했습니다.'
+      setDeleteErrors((previous) => ({ ...previous, [player.id]: message }))
     } finally {
       setPendingId(null)
     }
@@ -95,7 +125,16 @@ export function PlayerListPage() {
                         disabled={pendingId === player.id}
                       >
                         {player.active ? '비활성화' : '활성화'}
+                      </button>{' '}
+                      <button
+                        onClick={() => handleDelete(player)}
+                        disabled={pendingId === player.id}
+                      >
+                        삭제
                       </button>
+                      {deleteErrors[player.id] && (
+                        <p className="error row-error">{deleteErrors[player.id]}</p>
+                      )}
                     </td>
                   )}
                 </tr>

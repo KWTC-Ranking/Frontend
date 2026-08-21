@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
+  deletePlayer,
   getPlayer,
   getPlayerPointHistory,
   getPlayerRankings,
@@ -8,8 +9,11 @@ import {
   updatePlayer,
 } from '../api/players'
 import { ApiError } from '../api/client'
-import type { PlayerRankingResponse, PlayerResponse, PointHistoryEntryResponse } from '../api/types'
+import { Pagination } from '../components/Pagination'
+import type { Page, PlayerRankingResponse, PlayerResponse, PointHistoryEntryResponse } from '../api/types'
 import { useAuth } from '../context/useAuth'
+
+const HISTORY_PAGE_SIZE = 15
 
 type LoadState =
   | { status: 'loading' }
@@ -18,31 +22,35 @@ type LoadState =
       status: 'ready'
       player: PlayerResponse
       rankings: PlayerRankingResponse[]
-      history: PointHistoryEntryResponse[]
     }
+
+type HistoryState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | { status: 'ready'; page: Page<PointHistoryEntryResponse> }
 
 export function PlayerDetailPage() {
   const { id } = useParams<{ id: string }>()
   const playerId = Number(id)
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
+  const [historyPageNumber, setHistoryPageNumber] = useState(0)
+  const [historyState, setHistoryState] = useState<HistoryState>({ status: 'loading' })
   const [newPassword, setNewPassword] = useState('')
   const [resetMessage, setResetMessage] = useState<{ text: string; ok: boolean } | null>(null)
   const [resetSubmitting, setResetSubmitting] = useState(false)
   const [togglingActive, setTogglingActive] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
 
-    Promise.all([
-      getPlayer(playerId),
-      getPlayerRankings(playerId),
-      getPlayerPointHistory(playerId, { size: 20 }),
-    ])
-      .then(([player, rankings, history]) => {
-        if (!cancelled)
-          setLoadState({ status: 'ready', player, rankings, history: history.content })
+    Promise.all([getPlayer(playerId), getPlayerRankings(playerId)])
+      .then(([player, rankings]) => {
+        if (!cancelled) setLoadState({ status: 'ready', player, rankings })
       })
       .catch(() => {
         if (!cancelled)
@@ -53,6 +61,23 @@ export function PlayerDetailPage() {
       cancelled = true
     }
   }, [playerId])
+
+  useEffect(() => {
+    let cancelled = false
+
+    getPlayerPointHistory(playerId, { page: historyPageNumber, size: HISTORY_PAGE_SIZE })
+      .then((page) => {
+        if (!cancelled) setHistoryState({ status: 'ready', page })
+      })
+      .catch(() => {
+        if (!cancelled)
+          setHistoryState({ status: 'error', message: '점수 변동 이력을 불러오지 못했습니다.' })
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [playerId, historyPageNumber])
 
   async function handleResetPassword(event: FormEvent) {
     event.preventDefault()
@@ -87,6 +112,31 @@ export function PlayerDetailPage() {
     }
   }
 
+  async function handleDelete() {
+    if (loadState.status !== 'ready') return
+    if (
+      !window.confirm(
+        `${loadState.player.fullName} 님을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`,
+      )
+    ) {
+      return
+    }
+    setDeleting(true)
+    setDeleteError(null)
+    try {
+      await deletePlayer(loadState.player.id)
+      navigate('/players')
+    } catch (err) {
+      setDeleteError(
+        err instanceof ApiError && err.status === 409
+          ? '경기 기록이 있어 삭제할 수 없습니다. 대신 비활성화를 사용하세요.'
+          : '삭제에 실패했습니다.',
+      )
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   if (loadState.status === 'loading') return <p>불러오는 중...</p>
   if (loadState.status === 'error') {
     return (
@@ -96,7 +146,7 @@ export function PlayerDetailPage() {
     )
   }
 
-  const { player, rankings, history } = loadState
+  const { player, rankings } = loadState
 
   return (
     <div className="admin-page">
@@ -108,7 +158,15 @@ export function PlayerDetailPage() {
             <button onClick={handleToggleActive} disabled={togglingActive}>
               {player.active ? '비활성화' : '활성화'}
             </button>
+            <button onClick={handleDelete} disabled={deleting}>
+              삭제
+            </button>
           </div>
+        )}
+        {deleteError && (
+          <p className="error" role="alert">
+            {deleteError}
+          </p>
         )}
       </header>
 
@@ -168,37 +226,52 @@ export function PlayerDetailPage() {
 
       <section className="detail-section">
         <h2>점수 변동 이력</h2>
-        {history.length === 0 ? (
+        {historyState.status === 'loading' && <p>불러오는 중...</p>}
+        {historyState.status === 'error' && (
+          <p className="error" role="alert">
+            {historyState.message}
+          </p>
+        )}
+        {historyState.status === 'ready' && historyState.page.content.length === 0 && (
           <p>아직 이력이 없습니다.</p>
-        ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>경기</th>
-                  <th>결과</th>
-                  <th>세트격차</th>
-                  <th>티어가중치</th>
-                  <th>마진가중치</th>
-                  <th>획득점수</th>
-                </tr>
-              </thead>
-              <tbody>
-                {history.map((entry) => (
-                  <tr key={entry.id}>
-                    <td>
-                      <Link to={`/matches/${entry.matchId}`}>#{entry.matchId}</Link>
-                    </td>
-                    <td>{entry.role === 'WINNER' ? '승' : '패'}</td>
-                    <td>{entry.setMargin}</td>
-                    <td>{entry.tierWeight}</td>
-                    <td>{entry.marginWeight}</td>
-                    <td>{entry.pointsAwarded}</td>
+        )}
+        {historyState.status === 'ready' && historyState.page.content.length > 0 && (
+          <>
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>경기</th>
+                    <th>결과</th>
+                    <th>게임격차</th>
+                    <th>티어가중치</th>
+                    <th>마진가중치</th>
+                    <th>획득점수</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {historyState.page.content.map((entry) => (
+                    <tr key={entry.id}>
+                      <td>
+                        <Link to={`/matches/${entry.matchId}`}>#{entry.matchId}</Link>
+                      </td>
+                      <td>{entry.role === 'WINNER' ? '승' : '패'}</td>
+                      <td>{entry.gameMargin}</td>
+                      <td>{entry.tierWeight}</td>
+                      <td>{entry.marginWeight}</td>
+                      <td>{entry.pointsAwarded}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination
+              page={historyState.page.number}
+              totalPages={historyState.page.totalPages}
+              totalElements={historyState.page.totalElements}
+              onPageChange={setHistoryPageNumber}
+            />
+          </>
         )}
       </section>
 
