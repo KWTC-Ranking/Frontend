@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { getMatch } from '../api/matches'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { deleteMatch, getMatch } from '../api/matches'
+import { ApiError } from '../api/client'
 import type { MatchResponse } from '../api/types'
+import { useAuth } from '../context/useAuth'
 
 type LoadState =
   | { status: 'loading' }
@@ -11,7 +13,11 @@ type LoadState =
 export function MatchDetailPage() {
   const { id } = useParams<{ id: string }>()
   const matchId = Number(id)
+  const { user } = useAuth()
+  const navigate = useNavigate()
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -30,6 +36,21 @@ export function MatchDetailPage() {
     }
   }, [matchId])
 
+  async function handleDelete() {
+    if (!window.confirm('이 경기를 삭제하시겠습니까? 지급된 포인트/승패가 모두 되돌려지고, 이 작업은 되돌릴 수 없습니다.')) {
+      return
+    }
+    setDeleting(true)
+    setDeleteError(null)
+    try {
+      await deleteMatch(matchId)
+      navigate('/matches')
+    } catch (err) {
+      setDeleteError(err instanceof ApiError ? err.message : '삭제에 실패했습니다.')
+      setDeleting(false)
+    }
+  }
+
   if (loadState.status === 'loading') return <p>불러오는 중...</p>
   if (loadState.status === 'error') {
     return (
@@ -45,7 +66,20 @@ export function MatchDetailPage() {
     <div className="admin-page">
       <header className="admin-header">
         <h1>경기 #{match.id}</h1>
+        {user?.role === 'ADMIN' && (
+          <div className="header-actions">
+            <Link to={`/matches/${match.id}/edit`}>점수 수정</Link>
+            <button onClick={handleDelete} disabled={deleting}>
+              삭제
+            </button>
+          </div>
+        )}
       </header>
+      {deleteError && (
+        <p className="error" role="alert">
+          {deleteError}
+        </p>
+      )}
 
       <section className="detail-section">
         <dl className="kv">
@@ -77,8 +111,8 @@ export function MatchDetailPage() {
               </h3>
               <p>{team.setsWon}세트 승</p>
               <ul>
-                {team.players.map((player) => (
-                  <li key={player.playerId}>{player.fullName}</li>
+                {team.players.map((player, index) => (
+                  <li key={player.playerId ?? `deleted-${index}`}>{player.fullName}</li>
                 ))}
               </ul>
             </div>
@@ -122,8 +156,8 @@ export function MatchDetailPage() {
               </tr>
             </thead>
             <tbody>
-              {match.pointTransactions.map((tx) => (
-                <tr key={tx.playerId}>
+              {match.pointTransactions.map((tx, index) => (
+                <tr key={tx.playerId ?? `deleted-${index}`}>
                   <td>{tx.fullName}</td>
                   <td>{tx.role === 'WINNER' ? '승' : '패'}</td>
                   <td>{tx.pointsAwarded}</td>

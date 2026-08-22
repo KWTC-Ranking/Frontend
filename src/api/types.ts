@@ -49,6 +49,7 @@ export interface PlayerUpdateRequest {
   fullName?: string
   email?: string
   active?: boolean
+  role?: PlayerRole
 }
 
 export interface PlayerResponse {
@@ -119,7 +120,8 @@ export interface MatchTeamRequest {
 }
 
 export interface PlayerRef {
-  playerId: number
+  /** null when this participant's account has since been deleted (see fullName: "(탈퇴한 회원)"). */
+  playerId: number | null
   fullName: string
 }
 
@@ -130,7 +132,7 @@ export interface MatchTeamResponse {
 }
 
 export interface PointAwardResponse {
-  playerId: number
+  playerId: number | null
   fullName: string
   role: MatchOutcome
   pointsAwarded: number
@@ -140,6 +142,10 @@ export interface MatchRecordRequest {
   matchType: MatchType
   playedAt?: string
   teams: MatchTeamRequest[]
+  sets: MatchSetRequest[]
+}
+
+export interface MatchScoreCorrectionRequest {
   sets: MatchSetRequest[]
 }
 

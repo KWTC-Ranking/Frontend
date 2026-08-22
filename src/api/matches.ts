@@ -2,6 +2,7 @@ import { apiFetch, buildQuery } from './client'
 import type {
   MatchRecordRequest,
   MatchResponse,
+  MatchScoreCorrectionRequest,
   MatchSummaryResponse,
   MatchType,
   Page,
@@ -12,6 +13,19 @@ export function recordMatch(request: MatchRecordRequest): Promise<MatchResponse>
     method: 'POST',
     body: JSON.stringify(request),
   })
+}
+
+/** Admin-only: corrects a mistakenly entered set score. Teams/players cannot be changed. */
+export function correctMatchScore(id: number, request: MatchScoreCorrectionRequest): Promise<MatchResponse> {
+  return apiFetch<MatchResponse>(`/api/matches/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(request),
+  })
+}
+
+/** Admin-only: permanently deletes a match and undoes the points/wins/losses it awarded. */
+export function deleteMatch(id: number): Promise<void> {
+  return apiFetch<void>(`/api/matches/${id}`, { method: 'DELETE' })
 }
 
 export function listMatches(

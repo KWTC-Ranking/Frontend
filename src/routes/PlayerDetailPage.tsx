@@ -114,11 +114,11 @@ export function PlayerDetailPage() {
 
   async function handleDelete() {
     if (loadState.status !== 'ready') return
-    if (
-      !window.confirm(
-        `${loadState.player.fullName} 님을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`,
-      )
-    ) {
+    const hasHistory = loadState.rankings.length > 0
+    const confirmMessage = hasHistory
+      ? `${loadState.player.fullName} 님을 삭제하시겠습니까? 계정과 개인 기록이 사라지고, 함께한 경기에는 "(탈퇴한 회원)"으로 표시됩니다. 이 작업은 되돌릴 수 없습니다.`
+      : `${loadState.player.fullName} 님을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`
+    if (!window.confirm(confirmMessage)) {
       return
     }
     setDeleting(true)
@@ -127,11 +127,7 @@ export function PlayerDetailPage() {
       await deletePlayer(loadState.player.id)
       navigate('/players')
     } catch (err) {
-      setDeleteError(
-        err instanceof ApiError && err.status === 409
-          ? '경기 기록이 있어 삭제할 수 없습니다. 대신 비활성화를 사용하세요.'
-          : '삭제에 실패했습니다.',
-      )
+      setDeleteError(err instanceof ApiError ? err.message : '삭제에 실패했습니다.')
     } finally {
       setDeleting(false)
     }

@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getPlayer, updatePlayer } from '../api/players'
 import { ApiError } from '../api/client'
+import type { PlayerRole } from '../api/types'
 
 type LoadState = { status: 'loading' } | { status: 'error'; message: string } | { status: 'ready' }
 
@@ -14,6 +15,7 @@ export function PlayerEditPage() {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [active, setActive] = useState(true)
+  const [role, setRole] = useState<PlayerRole>('MEMBER')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -26,6 +28,7 @@ export function PlayerEditPage() {
         setFullName(player.fullName)
         setEmail(player.email ?? '')
         setActive(player.active)
+        setRole(player.role)
         setLoadState({ status: 'ready' })
       })
       .catch(() => {
@@ -47,6 +50,7 @@ export function PlayerEditPage() {
         fullName,
         email: email.trim() === '' ? undefined : email,
         active,
+        role,
       })
       navigate(`/players/${playerId}`)
     } catch (err) {
@@ -87,6 +91,13 @@ export function PlayerEditPage() {
             onChange={(event) => setActive(event.target.checked)}
           />
           활성 상태
+        </label>
+        <label>
+          역할
+          <select value={role} onChange={(event) => setRole(event.target.value as PlayerRole)}>
+            <option value="MEMBER">일반 회원</option>
+            <option value="ADMIN">관리자</option>
+          </select>
         </label>
         {error && (
           <p className="error" role="alert">

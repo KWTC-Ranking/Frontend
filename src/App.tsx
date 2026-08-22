@@ -12,6 +12,7 @@ import { PlayerEditPage } from './routes/PlayerEditPage'
 import { RecordMatchPage } from './routes/RecordMatchPage'
 import { MatchListPage } from './routes/MatchListPage'
 import { MatchDetailPage } from './routes/MatchDetailPage'
+import { MatchEditPage } from './routes/MatchEditPage'
 import { AddMemberPage } from './routes/AddMemberPage'
 import { AdminTierWeightsPage } from './routes/AdminTierWeightsPage'
 import { AdminDataResetPage } from './routes/AdminDataResetPage'
@@ -47,6 +48,14 @@ function App() {
             <Route path="matches" element={<MatchListPage />} />
             <Route path="matches/new" element={<RecordMatchPage />} />
             <Route path="matches/:id" element={<MatchDetailPage />} />
+            <Route
+              path="matches/:id/edit"
+              element={
+                <AdminRoute>
+                  <MatchEditPage />
+                </AdminRoute>
+              }
+            />
 
             <Route
               path="admin/members/new"

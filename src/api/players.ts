@@ -39,7 +39,10 @@ export function resetPlayerPassword(id: number, request: PasswordResetRequest): 
   })
 }
 
-/** Only succeeds if the player has never played a match; the backend returns 409 otherwise. */
+/**
+ * Permanently deletes a player, even one with match history. Matches they played stay intact
+ * for the other participants; the deleted player's own slot shows as "(탈퇴한 회원)".
+ */
 export function deletePlayer(id: number): Promise<void> {
   return apiFetch<void>(`/api/players/${id}`, { method: 'DELETE' })
 }
