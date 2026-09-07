@@ -15,6 +15,7 @@ import { MatchDetailPage } from './routes/MatchDetailPage'
 import { MatchEditPage } from './routes/MatchEditPage'
 import { AddMemberPage } from './routes/AddMemberPage'
 import { AdminTierWeightsPage } from './routes/AdminTierWeightsPage'
+import { AdminSeasonPage } from './routes/AdminSeasonPage'
 import { AdminDataResetPage } from './routes/AdminDataResetPage'
 import './App.css'
 
@@ -78,6 +79,14 @@ function App() {
               element={
                 <AdminRoute>
                   <AdminDataResetPage />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="admin/season"
+              element={
+                <AdminRoute>
+                  <AdminSeasonPage />
                 </AdminRoute>
               }
             />

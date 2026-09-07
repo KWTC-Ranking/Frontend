@@ -189,3 +189,12 @@ export interface DataResetResponse {
   deletedMatches: number
   deletedRankings: number
 }
+
+export interface SeasonStateResponse {
+  open: boolean
+  updatedAt: string
+}
+
+export interface SeasonStateUpdateRequest {
+  open: boolean
+}
